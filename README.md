@@ -1,1 +1,1 @@
-# Brain-Tumor-Segmentation-With-Adversarial-Networks
+# Brain Tumor Segmentation with Adversarial Networks
