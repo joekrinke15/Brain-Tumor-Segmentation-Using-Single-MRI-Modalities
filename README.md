@@ -20,5 +20,3 @@ Our model, in contrast, trains on individual modality-image pairs.
 ## Try out the model in colab [here](https://colab.research.google.com/drive/1laFY29aCy865ZHCGtqoA7upZn7CPTr4X?usp=sharing).
 
 ![segmentations](https://raw.githubusercontent.com/joekrinke15/Brain-Tumor-Segmentation-Using-Single-MRI-Modalities/master/ReadMeImages/samplesegmentation.png)
-
-# Citations
