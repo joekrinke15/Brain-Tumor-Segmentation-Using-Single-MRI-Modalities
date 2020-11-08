@@ -69,6 +69,7 @@ def voxel_clip(x):
     x['image'][x['image'] > upper] = upper
     x['image'][x['image'] < lower] = lower
     return {'image':image, 'mask': mask}
+
 def binarize(x):
     """
     Convert a given mask array from having multiple categories to 1 and 0.
