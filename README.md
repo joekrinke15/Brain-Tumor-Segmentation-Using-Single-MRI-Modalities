@@ -14,4 +14,7 @@ Our model, in contrast, trains on individual modality-image pairs.
 
 ![segmentations](https://raw.githubusercontent.com/joekrinke15/Brain-Tumor-Segmentation-Using-Single-MRI-Modalities/master/ReadMeImages/samplesegmentation.png)
 
-# Model Performance
+# Model Performance on BrATS 2015 Dataset
+| Dice Score | Precision | Recall |
+|:----------:|:---------:|:------:|
+|    .8422   |   .8330   |  .8608 |
