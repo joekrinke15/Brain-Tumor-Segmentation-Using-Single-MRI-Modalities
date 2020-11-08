@@ -1,5 +1,5 @@
 # Training Methodology 
-MRI segmentation models are usually trained with each modality as an input channel to the model. 
+MRI tumor segmentation models are usually trained with each modality as an input channel to the model. 
 
 ![modalities](https://raw.githubusercontent.com/joekrinke15/Brain-Tumor-Segmentation-Using-Single-MRI-Modalities/master/ReadMeImages/concat.PNG)
 
