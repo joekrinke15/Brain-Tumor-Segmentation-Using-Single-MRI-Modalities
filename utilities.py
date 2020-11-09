@@ -1,28 +1,50 @@
 def standardize(x):
-    """
-    Scales the image to have a value between 0 and 1. 
-    Inputs:
-        x: An image tensor.
-    Outputs:
-        image, mask: The standardized image and mask. 
-    
-    """
-    image = tf.truediv(
+    t1 = tf.math.divide_no_nan(
     tf.subtract(
-        x['image'], 
-        tf.reduce_min(x['image'])
+        x['t1'], 
+        tf.reduce_min(x['t1'])
     ), 
     tf.subtract(
-        tf.reduce_max(x['image']), 
-        tf.reduce_min(x['image'])
+        tf.reduce_max(x['t1']), 
+        tf.reduce_min(x['t1'])
+    )
+  )
+    t2 = tf.math.divide_no_nan(
+    tf.subtract(
+        x['t2'], 
+        tf.reduce_min(x['t2'])
+    ), 
+    tf.subtract(
+        tf.reduce_max(x['t2']), 
+        tf.reduce_min(x['t2'])
+    )
+  )
+    t1c = tf.math.divide_no_nan(
+    tf.subtract(
+        x['t1c'], 
+        tf.reduce_min(x['t1c'])
+    ), 
+    tf.subtract(
+        tf.reduce_max(x['t1c']), 
+        tf.reduce_min(x['t1c'])
+    )
+  )
+    flair = tf.math.divide_no_nan(
+    tf.subtract(
+        x['flair'], 
+        tf.reduce_min(x['flair'])
+    ), 
+    tf.subtract(
+        tf.reduce_max(x['flair']), 
+        tf.reduce_min(x['flair'])
     )
   )
     mask = x['mask']
-    return (image,mask)
+    return {'flair':flair, 'mask':mask, 't1':t1, 't2':t2, 't1c':t1c}
 
 def reshaping(x):
     """
-    Takes a tensor and reshapes it by adding an extra dimension.
+    Takes a tensor and reshapes it.
     Inputs:
           x (tuple of tensors with shape (240,240))
     Outputs:
@@ -30,9 +52,9 @@ def reshaping(x):
     """
     batchsize = -1
     dims = (240,240,1)
-    image = tf.reshape(x['image'], [batchsize,dims[0], dims[1], dims[2]])
-    mask = tf.reshape(x['mask'], [batchsize,dims[0], dims[1], dims[2]])
-    return {'image':image, 'mask': mask}
+    image = tf.stack([x['t1'],x['flair'],x['t2'],x['t1c']], axis=0)
+    mask = tf.stack([x['mask'], x['mask'], x['mask'],x['mask']], axis=0)
+    return image, mask
 
 def get_folders():
     """
@@ -56,20 +78,6 @@ def load_nii_data(filename):
     return(array)
 
 
-def voxel_clip(x):
-    """
-    Clips the image to the 2nd and 98th percentile values.
-    inputs:
-        img (a numpy array): The image you want to clip
-    outputs:
-        img (a numpy array): The image with its values clipped
-    """
-    upper = np.percentile(x['image'], 98)
-    lower = np.percentile(x['image'], 2)
-    x['image'][x['image'] > upper] = upper
-    x['image'][x['image'] < lower] = lower
-    return {'image':image, 'mask': mask}
-
 def binarize(x):
     """
     Convert a given mask array from having multiple categories to 1 and 0.
@@ -79,41 +87,27 @@ def binarize(x):
           array (a numpy array): An array containing only 1s and 0s. 
     """
     mask = tf.where(x['mask']>0, 1, 0)
-    image = x['image']
-    return {'image':image, 'mask':mask}
+    flair = x['flair']
+    t1 = x['t1']
+    t2 = x['t2']
+    t1c= x['t1c']
+    return{'flair':flair, 'mask':mask, 't1':t1, 't2':t2, 't1c':t1c}
 
 
 
 def cast(x):
-    """
-    Converts the image and mask tensors to float32.
-    Inputs:
-        image, mask: The image and mask tensors.
-    Outputs:
-        image, mask: The converted tensors.
-    """
-    image = tf.cast(x['image'], tf.float32)
-    mask= tf.cast(x['mask'], tf.float32)
-    return {'image':image, 'mask': mask}
+    mask = tf.cast(x['mask'], tf.float32)
+    flair = tf.cast(x['flair'], tf.float32)
+    t1 = tf.cast(x['t1'], tf.float32)
+    t2 = tf.cast(x['t1'], tf.float32)
+    t1c = tf.cast(x['t1c'], tf.float32)
+    return {'flair':flair, 'mask':mask, 't1':t1, 't2':t2, 't1c':t1c}
 
 def binary_prediction(x):
-    """
-    Convert a prediction into a binary outcome.
-    
-    Inputs: 
-        x: Predicted probability.
-    Outputs:
-        binary: Binary outcomes.
-        
-    """
     binary = tf.where(x >.50, 1 , 0)
     binary = tf.cast(binary, tf.float32)
     return(binary)
 
-def crop(x):
-    tf.image.central_crop
-    image = tf.cast(x['image'], tf.float32)
-    mask= tf.cast(x['mask'], tf.float32)
 
 def dice_coef(y_true, y_pred):    #original img size is 240*240,
     smooth = 1
@@ -135,11 +129,5 @@ def dice_coef(y_true, y_pred):    #original img size is 240*240,
 def dice_coef_loss(y_true, y_pred):
     """
     Uses predicted and actual values to calculate the dice coefficent loss. 
-
-    inputs:
-          y_true (numpy array): An array of 1s and 0s corresponding to binary class assignments.
-          y_pred (numpy array): Predicted class assignments.
-    outputs:
-          dice_coef (float): The dice loss of the two arrays.
     """
     return 1-dice_coef(y_true, y_pred)
