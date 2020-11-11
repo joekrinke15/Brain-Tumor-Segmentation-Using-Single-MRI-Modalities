@@ -3,7 +3,7 @@ MRI tumor segmentation models are usually trained with each modality as an input
 
 ![modalities](https://raw.githubusercontent.com/joekrinke15/Brain-Tumor-Segmentation-Using-Single-MRI-Modalities/master/ReadMeImages/concat.PNG)
 
-Our model, in contrast, trains on individual modality-image pairs. 
+Our model, in contrast, trains a U-Net on individual modality-image pairs. 
 
 ![novelinput](https://raw.githubusercontent.com/joekrinke15/Brain-Tumor-Segmentation-Using-Single-MRI-Modalities/master/ReadMeImages/individual.PNG)
 
